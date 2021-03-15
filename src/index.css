@@ -39,7 +39,7 @@ body {
 
 .Main {
   position: fixed;
-  left: calc((100% - 20rem )/ 2);
+  left: calc((100% - 30rem )/ 2);
   top: 10rem;
   width: 30rem;
   height: 20rem;

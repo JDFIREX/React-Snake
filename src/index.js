@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useCallback} from "react"
+import React, { useEffect, useState, useCallback} from "react"
 import ReactDOM from "react-dom"
 import "./index.css"
 
@@ -24,10 +24,12 @@ for(let i = 0; i < 950; i +=31){
 for(let i = 961 - 31; i < 961; i++){
     bb.push(i)
 }
+
 const game = [...pola];
 const center = 480;
 let snakeMove;
 let lastKey;
+let score = 0;
 
 const apple = (snakePos,setApplePos) => {
     let random = Math.round(Math.random() * 960)
@@ -44,12 +46,127 @@ const Pole = React.memo(({classes,idPole,children}) => {
         </div>
     )
 })
+const GameBoard = React.memo(({applePos, snakePos}) => {
+    
+    return(
+        <React.StrictMode>
+            {
+                game.map((a) => ( 
+                    <Pole 
+                        classes={ a === center ? "pole  center" : a === applePos ? "apple pole" : "pole" } 
+                        key={a} 
+                        idPole={a}
+                        children={snakePos.includes(a) && <div className={a === snakePos[0] ? "snake  head" : "snake"}></div>}
+                    >
+                    </Pole>
+                ))      
+            }
+        </React.StrictMode> 
+    )
 
-const Main = ({setMain,setStop}) => {
+})
+
+
+
+const GameBox = ({setEsc,stop,move, esc,setMove, applePos, setApplePos,snakePos,setStop,setSnakePos}) => {
+
+    useEffect(() => {
+
+        snakeMove = setInterval(() => {
+            if(esc === false){
+                let prevPos;
+                let newPos = [];
+                snakePos.forEach((a,b) => {
+                    if(b === 0){
+                        if(bt.includes(a) && move === -31){
+                            newPos.push((31 * 30) + a)
+                        }else if(bb.includes(a) && move === +31){
+                            newPos.push(a % 31);
+                        }else if(br.includes(a) && move === +1){
+                            newPos.push(a - 30)
+                        }else if(bl.includes(a) && move === -1){
+                            newPos.push(a + 30)
+                        }else{
+                            newPos.push(a + move)
+                        }
+                        if(snakePos.includes(newPos[0])){
+                            clearInterval(snakeMove)
+                            setStop(true);
+                        }
+                    }else{
+                        newPos.push(prevPos)
+                    }
+                    prevPos = a;
+                })
+                if(newPos[0] === applePos){
+                    newPos.push(prevPos)
+                    score = score +  1;
+                    prevPos = null;
+                    if(score >= 950){
+                        setStop(true);
+                    }
+                    apple(newPos,setApplePos)
+                }
+                setSnakePos([...newPos])
+            }else{
+                setSnakePos([...snakePos])
+            }
+        },100)
+
+        return () => {
+            clearInterval(snakeMove)
+        }
+        
+    },[esc,setEsc,snakePos])
+
+    const HandleClick = (e) => {
+        if(e.key !== lastKey){
+            if(e.key === "Escape" || e.key === "Esc"){
+                clearInterval(snakeMove)
+                setEsc(true)
+            }
+            if((e.key === "w" || e.key === "W") && move !== -31){
+                setMove(-31)
+                lastKey = e.key;
+            }
+            if((e.key === "a" || e.key === "A") && move !== -1){
+                setMove(-1)
+                lastKey = e.key;
+            }
+            if((e.key === "d" || e.key === "D") && move !== +1){
+                setMove(+1)
+                lastKey = e.key;
+            }
+            if((e.key === "s" || e.key === "s") && move !== +31){
+                setMove(+31)
+                lastKey = e.key;
+            }
+        }
+    }
+
+    useEffect(() => {
+        window.addEventListener("keydown", HandleClick)
+        
+        return () => {
+            window.removeEventListener("keydown", HandleClick)
+        } 
+    },[move,setMove])
+
+    
+
+    return (
+        <React.StrictMode>
+            {stop === false && <GameBoard applePos={applePos} snakePos={snakePos} />}
+        </React.StrictMode> 
+    )
+}
+
+const Main = ({setMain,snakePos,setApplePos}) => {
 
     const HandleClick = () => {
+
         setMain(false)
-        setStop(false);
+        apple(snakePos,setApplePos)
     }
 
     return(
@@ -60,142 +177,69 @@ const Main = ({setMain,setStop}) => {
     )
 }
 
-const GameBoard = React.memo(({applePos,move,setStop,setScore,score,setApplePos}) => {
+const EscBox = ({setEsc,setMove,move,setStop}) => {
 
-    const [snakePos, setSnakePos] = useState([480, 480 + 31, 480 + 62])
-
-    useEffect(() => {
-        apple(snakePos,setApplePos)
-    },[])
-    
-    useEffect(() => {
-        snakeMove = setInterval(() => {
-            let prevPos;
-            let newPos = [];
-            snakePos.forEach((a,b) => {
-                if(b === 0){
-                    if(bt.includes(a) && move === -31){
-                        newPos.push((31 * 30) + a)
-                    }else if(bb.includes(a) && move === +31){
-                        newPos.push(a % 31);
-                    }else if(br.includes(a) && move === +1){
-                        newPos.push(a - 30)
-                    }else if(bl.includes(a) && move === -1){
-                        newPos.push(a + 30)
-                    }else{
-                        newPos.push(a + move)
-                        if(snakePos.includes(newPos[0])){
-                            setStop(true);
-                        }
-                    }
-                }else{
-                    newPos.push(prevPos)
-                }
-                prevPos = a;
-            })
-            if(newPos[0] === applePos){
-                newPos.push(prevPos)
-                setScore(score + 1)
-                if(score >= 950){
-                    setStop(true)
-                }
-                apple(snakePos,setApplePos)
-            }
-            setSnakePos([...newPos])
-        },100);
-        
-        
-        return () => {
-            clearInterval(snakeMove)
-        }
-    })
-
-    return(
-        <React.StrictMode>
-                {
-                    game.map((a) => ( 
-                        <Pole 
-                            classes={a === applePos ? "pole apple" : a === center ? "pole  center" : "pole"} 
-                            key={a} 
-                            idPole={a}
-                            children={snakePos.includes(a) && <div className={a === snakePos[0] ? "snake  head" : "snake"}></div>}
-                        >
-                        </Pole>
-                    ))      
-                }
-        </React.StrictMode> 
-    )
-
-})
-
-const GameBox = () => {
-    const [score, setScore] = useState(0)
-    const [move, setMove] = useState(-31);
-    const [applePos, setApplePos] = useState(null)
-    const [rerender, setrerender] = useState(false)
-    const [stop, setStop] = useState(false)
-
-
-    const HandleClick = (e) => {
-        if(e.key !== lastKey){
-            if(e.key ==="Escape" || "Esc"){
-                setrerender(false)
-                clearInterval(snakeMove)
-            }
-            if(e.key ==="Enter"){
-                setrerender(true)
-            }
-            if((e.key === "w" || e.key === "W") && move !== -31){
-                setMove(-31)
-            }
-            if((e.key === "a" || e.key === "A") && move !== -1){
-                setMove(-1)
-            }
-            if((e.key === "d" || e.key === "D") && move !== +1){
-                setMove(+1)
-            }
-            if((e.key === "s" || e.key === "s") && move !== +31){
-                setMove(+31)
-            }
-            lastKey = e.key;
-        }
+    const HandleClick = () => {
+        setEsc(false);
+        setMove(move)
+        setStop(false)
     }
 
 
-    useEffect(() => {
-        window.addEventListener("keydown", HandleClick)
-        
-        return () => {
-            window.removeEventListener("keydown", HandleClick)
-        } 
-    },[move,setMove])
-
-    useEffect(() => {
-        if(stop === true){
-            clearInterval(snakeMove)
-        }
-    },[stop])
-
-    
-
-    return (
-        <React.StrictMode>
-            {stop === false && <GameBoard applePos={applePos} move={move} setStop={setStop} setScore={setScore} score={score} setApplePos={setApplePos} />}
-        </React.StrictMode> 
+    return(
+        <div className="Main">
+            <h1>Resume Game</h1>
+            <button onClick={HandleClick}>PLAY</button>
+        </div>
     )
 }
 
+const EndBox = ({setEsc,setStop,setMove,setSnakePos,setApplePos}) => {
 
+    const HandleClick = () => {
+        setEsc(false);
+        setStop(false)
+        setMove(-31)
+        setApplePos(null)
+        setSnakePos([480, 480 + 31, 480 + 62])
+        apple([480, 480 + 31, 480 + 62],setApplePos)
+        score = 0;
+    }
+
+
+    return(
+        <div className="Main">
+            <h1>SCORE : {score}</h1>
+            <button onClick={HandleClick}>PLAY AGAIN</button>
+        </div>
+    )
+}
 
 const Root = () => {
-    const [stop, setStop] = useState(true)
+    const [stop, setStop] = useState(false)
     const [main, setMain] = useState(true)
+    const [esc, setEsc] = useState(false)
+    const [move, setMove] = useState(-31);
+    const [applePos, setApplePos] = useState(null)
+    const [snakePos, setSnakePos] = useState([480, 480 + 31, 480 + 62])
+
+    useEffect(() => {
+        if(stop === true || esc === true){
+            clearInterval(snakeMove)
+        }
+    },[stop,esc, setStop, setEsc])
 
     return (
         <React.StrictMode>
             <div className="gra">
                 {
-                    stop === false ? <GameBox /> : <Main setMain={setMain} setStop={setStop}/>
+                    stop === true ?
+                    <EndBox setEsc={setEsc} setStop={setStop} setMove={setMove} setSnakePos={setSnakePos} setApplePos={setApplePos}/> :
+                    esc === true ? 
+                    <EscBox setEsc={setEsc} move={move} setMove={setMove} setStop={setStop} /> :
+                    main === true ? 
+                    <Main  setMain={setMain} snakePos={snakePos} setApplePos={setApplePos}/> :
+                    <GameBox setEsc={setEsc} stop={stop} esc={esc} setStop={setStop} move={move} setMove={setMove} applePos={applePos} setApplePos={setApplePos} snakePos={snakePos} setSnakePos={setSnakePos} />  
                 }
             </div>
         </React.StrictMode> 
