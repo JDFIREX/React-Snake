@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback} from "react"
+import React, { useEffect, useState} from "react"
 import ReactDOM from "react-dom"
 import "./index.css"
 
@@ -66,9 +66,7 @@ const GameBoard = React.memo(({applePos, snakePos}) => {
 
 })
 
-
-
-const GameBox = ({setEsc,stop,move, esc,setMove, applePos, setApplePos,snakePos,setStop,setSnakePos}) => {
+const GameBox = React.memo(({setEsc,stop,move, esc,setMove, applePos, setApplePos,snakePos,setStop,setSnakePos}) => {
 
     useEffect(() => {
 
@@ -159,9 +157,9 @@ const GameBox = ({setEsc,stop,move, esc,setMove, applePos, setApplePos,snakePos,
             {stop === false && <GameBoard applePos={applePos} snakePos={snakePos} />}
         </React.StrictMode> 
     )
-}
+})
 
-const Main = ({setMain,snakePos,setApplePos}) => {
+const Main = React.memo(({setMain,snakePos,setApplePos}) => {
 
     const HandleClick = () => {
 
@@ -175,9 +173,9 @@ const Main = ({setMain,snakePos,setApplePos}) => {
             <button onClick={HandleClick}>PLAY</button>
         </div>
     )
-}
+})
 
-const EscBox = ({setEsc,setMove,move,setStop}) => {
+const EscBox = React.memo(({setEsc,setMove,move,setStop}) => {
 
     const HandleClick = () => {
         setEsc(false);
@@ -192,9 +190,9 @@ const EscBox = ({setEsc,setMove,move,setStop}) => {
             <button onClick={HandleClick}>PLAY</button>
         </div>
     )
-}
+})
 
-const EndBox = ({setEsc,setStop,setMove,setSnakePos,setApplePos}) => {
+const EndBox = React.memo(({setEsc,setStop,setMove,setSnakePos,setApplePos}) => {
 
     const HandleClick = () => {
         setEsc(false);
@@ -213,7 +211,7 @@ const EndBox = ({setEsc,setStop,setMove,setSnakePos,setApplePos}) => {
             <button onClick={HandleClick}>PLAY AGAIN</button>
         </div>
     )
-}
+})
 
 const Root = () => {
     const [stop, setStop] = useState(false)
@@ -246,7 +244,5 @@ const Root = () => {
     )
 
 }
-
-
 
 ReactDOM.render(<Root />, document.querySelector('#root'))
