@@ -1,0 +1,119 @@
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+body {
+  width: 100vw;
+  height: 900px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background-color: wheat;
+}
+
+.root {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 1800px;
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.Main {
+  position: fixed;
+  left: calc((100% - 20rem )/ 2);
+  top: 10rem;
+  width: 30rem;
+  height: 20rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background-color: black;
+  color: white;
+}
+
+.Main button {
+  width: 50%;
+  height: 3rem;
+  margin-top: 10rem;
+}
+
+.gra {
+  width: auto;
+  height: auto;
+  padding: 1rem;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: (1.78rem)[31];
+      grid-template-columns: repeat(31, 1.78rem);
+  -ms-grid-rows: (1.75rem)[31];
+      grid-template-rows: repeat(31, 1.75rem);
+}
+
+.pole {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid black;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.center {
+  background-color: blue;
+}
+
+.snake {
+  width: 1rem;
+  height: 1rem;
+  background-color: lightgreen;
+}
+
+.head {
+  width: 1rem;
+  height: 1rem;
+  background-color: darkgreen;
+}
+
+.border {
+  background-color: lightblue;
+}
+
+.apple {
+  background-color: red;
+}
+/*# sourceMappingURL=index.css.map */
